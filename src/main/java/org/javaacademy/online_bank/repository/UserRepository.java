@@ -4,15 +4,15 @@ import org.javaacademy.online_bank.entity.User;
 import org.javaacademy.online_bank.exception.AlreadyExistsUserException;
 import org.javaacademy.online_bank.exception.NotFoundUserException;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class UserRepository {
-    private final HashMap<UUID, User> users = new HashMap<>();
+    private final Map<UUID, User> users = new HashMap<>();
 
     public User add(User user) {
         users.values().stream()

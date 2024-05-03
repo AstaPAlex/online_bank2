@@ -1,3 +1,6 @@
 token:
   prefix: online
   postfix: token
+account:
+  count-number: 6
+  max-number: 1000000

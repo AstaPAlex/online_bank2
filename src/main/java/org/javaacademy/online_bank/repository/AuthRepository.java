@@ -3,12 +3,13 @@ package org.javaacademy.online_bank.repository;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 @Component
 public class AuthRepository {
-    private final HashMap<UUID, String> pinCodes = new HashMap<>();
+    private final Map<UUID, String> pinCodes = new HashMap<>();
 
     public void add(UUID uuid, String pinCode) {
         pinCodes.put(uuid, pinCode);
