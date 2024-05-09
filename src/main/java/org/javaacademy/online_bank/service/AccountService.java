@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.AccountDto;
 import org.javaacademy.online_bank.entity.Account;
 import org.javaacademy.online_bank.entity.User;
-import org.javaacademy.online_bank.exception.LimitBalanceException;
-import org.javaacademy.online_bank.exception.LimitCountAccountException;
 import org.javaacademy.online_bank.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,38 +14,44 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private Integer countNumber = 0;
-    private static final Integer MAX_COUNT_NUMBER = 999_999;
+    private static final Integer MAX_COUNT_ACCOUNT = 999_999;
+    private Integer countAccount = 0;
     private final AccountRepository accountRepository;
 
-    private String generateAccount() {
-        if (countNumber < MAX_COUNT_NUMBER) {
-            countNumber++;
-            return String.format("%06d", countNumber);
+    private String generateNumberAccount() {
+        if (countAccount < MAX_COUNT_ACCOUNT) {
+            countAccount++;
+            return String.format("%06d", countAccount);
         }
-        throw new LimitCountAccountException();
+        throw new RuntimeException("The number of accounts has been exceeded!");
     }
 
-    public void createAccountForUser(User user) {
-        accountRepository.addAccount(generateAccount(), user);
+    public String createAccountForUser(User user) {
+        String accountNumber = generateNumberAccount();
+        accountRepository.addAccount(accountNumber, user);
+        return accountNumber;
     }
 
-    public void plusBalance(String number, BigDecimal amount) {
-        Account account = accountRepository.findAccountByNumber(number);
-        account.setBalance(getBalance(number).add(amount));
+    public void plusBalance(String numberAccount, BigDecimal amount) {
+        Account account = accountRepository.findAccountByNumber(numberAccount);
+        account.setBalance(getBalance(numberAccount).add(amount));
     }
 
-    public void minusBalance(String number, BigDecimal amount) {
-        Account account = accountRepository.findAccountByNumber(number);
-        BigDecimal balance = getBalance(number);
+    public void minusBalance(String numberAccount, BigDecimal amount) {
+        Account account = accountRepository.findAccountByNumber(numberAccount);
+        BigDecimal balance = getBalance(numberAccount);
         if (balance.compareTo(amount) < 0) {
-            throw new LimitBalanceException();
+            throw new RuntimeException("There are not enough funds in the account!");
         }
         account.setBalance(balance.subtract(amount));
     }
 
-    public List<AccountDto> findAllAccountByUser(User user) {
-        return accountRepository.getAllAccountByUser(user).stream()
+    public List<Account> findAllAccountsByUser(User user) {
+        return accountRepository.getAllAccountsByUser(user);
+    }
+
+    public List<AccountDto> getAllAccountsByUser(User user) {
+        return findAllAccountsByUser(user).stream()
                 .map(this::convertToDto)
                 .toList();
     }
@@ -60,12 +64,19 @@ public class AccountService {
         );
     }
 
-    public BigDecimal getBalance(String number) {
-        return accountRepository.findAccountByNumber(number).getBalance();
+    public BigDecimal getBalance(String numberAccount) {
+        return accountRepository.findAccountByNumber(numberAccount).getBalance();
     }
 
-    public boolean accountOwnedUser(User user, String number) {
-        User userOwned = accountRepository.findAccountByNumber(number).getUser();
+    public boolean accountOwnedUser(User user, String numberAccount) {
+        User userOwned = accountRepository.findAccountByNumber(numberAccount).getUser();
         return Objects.equals(userOwned, user);
+    }
+
+    public BigDecimal getBalanceAccountByUser(String numberAccount, User user) {
+        if (accountOwnedUser(user, numberAccount)) {
+            return getBalance(numberAccount);
+        }
+        throw new RuntimeException("The account does not belong to this user!");
     }
 }

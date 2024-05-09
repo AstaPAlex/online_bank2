@@ -4,9 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.config.TokenProperty;
 import org.javaacademy.online_bank.dto.UserDto;
 import org.javaacademy.online_bank.entity.User;
-import org.javaacademy.online_bank.exception.InvalidPinCodeException;
-import org.javaacademy.online_bank.exception.InvalidTokenException;
-import org.javaacademy.online_bank.exception.NotFoundUserException;
 import org.javaacademy.online_bank.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +33,10 @@ public class UserService {
         return new User(userDto.getFullName(), userDto.getNumberPhone());
     }
 
-    private UserDto convertToDto(User user) {
-        return new UserDto(user.getFullName(), user.getNumberPhone());
-    }
-
-    public String signIn(String number, String pinCode) {
-        UUID uuid = userRepository.findUuidByNumber(number);
+    public String signIn(String numberPhone, String pinCode) {
+        UUID uuid = userRepository.findUuidByNumberPhone(numberPhone);
         if (!authService.signIn(uuid, pinCode)) {
-            throw new InvalidPinCodeException();
+            throw new RuntimeException("Invalid PIN code!");
         }
         return generateToken(uuid);
     }
@@ -52,20 +45,20 @@ public class UserService {
         return tokenProperty.getPrefix() + uuid.toString() + tokenProperty.getPostfix();
     }
 
-    private UUID decryptionToken(String token) {
+    public UUID decryptionToken(String token) {
         try {
             return UUID.fromString(token
                     .replace(tokenProperty.getPrefix(), "")
                     .replace(tokenProperty.getPostfix(), "")
             );
         } catch (IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            throw new RuntimeException("Invalid token!");
         }
     }
 
-    public UserDto findUser(String token) {
-        return convertToDto(userRepository
+    public User findUser(String token) {
+        return userRepository
                 .findUserByUuid(decryptionToken(token))
-                .orElseThrow(NotFoundUserException::new));
+                .orElseThrow(() -> new RuntimeException("Such a user has not been found!"));
     }
 }

@@ -1,8 +1,6 @@
 package org.javaacademy.online_bank.repository;
 
 import org.javaacademy.online_bank.entity.User;
-import org.javaacademy.online_bank.exception.AlreadyExistsUserException;
-import org.javaacademy.online_bank.exception.NotFoundUserException;
 import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,24 +18,24 @@ public class UserRepository {
                 .filter(number -> Objects.equals(number, user.getNumberPhone()))
                 .findFirst()
                 .ifPresent(number -> {
-                    throw new AlreadyExistsUserException();
+                    throw new RuntimeException("A user with this phone number already exists!");
                 });
-        return generateUuidAndAdd(user);
-    }
-
-    private User generateUuidAndAdd(User user) {
-        UUID uuid = UUID.randomUUID();
-        user.setUuid(uuid);
-        users.put(uuid, user);
+        users.put(generateUuid(user), user);
         return user;
     }
 
-    public UUID findUuidByNumber(String number) {
+    private UUID generateUuid(User user) {
+        UUID uuid = UUID.randomUUID();
+        user.setUuid(uuid);
+        return uuid;
+    }
+
+    public UUID findUuidByNumberPhone(String number) {
         return users.values().stream()
                 .filter(user -> Objects.equals(user.getNumberPhone(), number))
                 .findFirst()
                 .map(User::getUuid)
-                .orElseThrow(NotFoundUserException::new);
+                .orElseThrow(() -> new RuntimeException("There is no user with this number!"));
     }
 
     public Optional<User> findUserByUuid(UUID uuid) {
