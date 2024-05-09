@@ -2,7 +2,6 @@ package org.javaacademy.online_bank.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
 import org.javaacademy.online_bank.dto.UserAuthDto;
 import org.javaacademy.online_bank.dto.UserDto;
 

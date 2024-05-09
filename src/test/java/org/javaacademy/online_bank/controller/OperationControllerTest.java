@@ -35,7 +35,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
     void refillSuccess() {
         String token = getToken();
         String accountNumber = createAccount(token);
-        refill(BigDecimal.TEN, 202, accountNumber);
+        refill(BigDecimal.TEN, 201, accountNumber);
         TreeSet<Operation> operations = operationRepository.getAllOperationsByNumberAccount(accountNumber);
         assertEquals(1, operations.size());
         Operation operation = operations.stream()
@@ -50,8 +50,8 @@ class OperationControllerTest extends AbstractIntegrationTest {
     void paySuccess() {
         String token = getToken();
         String accountNumber = createAccount(token);
-        refill(BigDecimal.valueOf(30), 202, accountNumber);
-        pay(BigDecimal.valueOf(30), 202, token, accountNumber);
+        refill(BigDecimal.valueOf(30), 201, accountNumber);
+        pay(BigDecimal.valueOf(30), 201, token, accountNumber);
         assertEquals(
                 BigDecimal.ZERO.setScale(2, RoundingMode.CEILING),
                 accountService.getBalance(accountNumber));

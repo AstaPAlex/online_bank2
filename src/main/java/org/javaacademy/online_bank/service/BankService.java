@@ -1,6 +1,7 @@
 package org.javaacademy.online_bank.service;
 
 import lombok.RequiredArgsConstructor;
+import org.javaacademy.online_bank.config.BankProperty;
 import org.javaacademy.online_bank.entity.Operation;
 import org.javaacademy.online_bank.entity.TypeOperation;
 import org.javaacademy.online_bank.entity.User;
@@ -13,9 +14,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BankService {
+    private final BankProperty bankProperty;
     private final AccountService accountService;
     private final UserService userService;
     private final OperationService operationService;
+    private final TransfersToOtherBanksService transfersToOtherBanksService;
 
     public void payment(String numberAccount, BigDecimal amount, String description, String token) {
         User user = userService.findUser(token);
@@ -45,6 +48,31 @@ public class BankService {
                 type,
                 amount,
                 description);
+    }
+
+    public String info() {
+        return bankProperty.getName();
+    }
+
+    public void transferToOtherBank(String token, BigDecimal amount, String description,
+                                    String numberAccountUser, String numberAccountToSend) {
+        User user = userService.findUser(token);
+        BigDecimal balance = accountService.getBalanceAccountByUser(numberAccountUser, user);
+        if (balance.compareTo(amount) >= 0) {
+            transfersToOtherBanksService.transfersToOtherBank(
+                    bankProperty.getName(),
+                    amount,
+                    description,
+                    user.getFullName(),
+                    numberAccountToSend
+                    );
+            accountService.minusBalance(numberAccountUser, amount);
+            operationService.addOperation(createOperation(
+                    numberAccountUser,
+                    TypeOperation.PAYMENT,
+                    amount, description)
+            );
+        }
     }
 
 }

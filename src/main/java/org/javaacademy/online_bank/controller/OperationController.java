@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.OperationPayDtoRq;
 import org.javaacademy.online_bank.dto.OperationDtoRs;
 import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
+import org.javaacademy.online_bank.dto.TransferDtoRq;
 import org.javaacademy.online_bank.service.BankService;
 import org.javaacademy.online_bank.service.OperationService;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class OperationController {
         return operationService.getAllOperationsByToken(token);
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/pay")
     public void pay(@RequestBody OperationPayDtoRq operationPayDtoRq) {
         bankService.payment(operationPayDtoRq.getNumberAccount(),
@@ -39,12 +40,26 @@ public class OperationController {
                 operationPayDtoRq.getToken());
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/receive")
     public void refill(@RequestBody OperationRefillDtoRq operationRefillDtoRq) {
-        bankService.refill(operationRefillDtoRq.getNumberAccount(),
+        bankService.refill(
+                operationRefillDtoRq.getNumberAccount(),
                 operationRefillDtoRq.getAmount(),
-                operationRefillDtoRq.getDescription());
+                operationRefillDtoRq.getDescription()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/transfer")
+    public void transfer(@RequestBody TransferDtoRq transferDtoRq) {
+        bankService.transferToOtherBank(
+                transferDtoRq.getToken(),
+                transferDtoRq.getAmount(),
+                transferDtoRq.getDescription(),
+                transferDtoRq.getNumberAccountUser(),
+                transferDtoRq.getNumberAccountToSend()
+        );
     }
 
 }

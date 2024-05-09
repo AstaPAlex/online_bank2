@@ -1,0 +1,5 @@
+bank:
+  name: LLC Eurobank
+  partner-url: http://localhost:8082
+server:
+  port: 8001
