@@ -1,10 +1,13 @@
 package org.javaacademy.online_bank.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.javaacademy.online_bank.dto.OperationPayDtoRq;
-import org.javaacademy.online_bank.dto.OperationDtoRs;
-import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
-import org.javaacademy.online_bank.dto.TransferDtoRq;
+import org.javaacademy.online_bank.dto.*;
 import org.javaacademy.online_bank.service.BankService;
 import org.javaacademy.online_bank.service.OperationService;
 import org.springframework.http.HttpStatus;
@@ -21,18 +24,24 @@ import java.util.TreeSet;
 @RestController
 @RequestMapping("/operation")
 @RequiredArgsConstructor
+@Tag(name = "Operation Controller", description = "Методы: пополнения, списания, перевода и получения списка операций!")
 public class OperationController {
     private final OperationService operationService;
     private final BankService bankService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public TreeSet<OperationDtoRs> getAllOperationsByToken(@RequestParam String token) {
+    @Operation(summary = "Получение всех операций по токену")
+    @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = OperationDtoRs.class)))
+    public TreeSet<OperationDtoRs> getAllOperationsByToken(
+            @RequestParam @Parameter(name = "Токен") String token) {
         return operationService.getAllOperationsByToken(token);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/pay")
+    @Operation(summary = "Создать платеж")
     public void pay(@RequestBody OperationPayDtoRq operationPayDtoRq) {
         bankService.payment(operationPayDtoRq.getNumberAccount(),
                 operationPayDtoRq.getAmount(),
@@ -40,6 +49,7 @@ public class OperationController {
                 operationPayDtoRq.getToken());
     }
 
+    @Operation(summary = "Пополнить счет")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/receive")
     public void refill(@RequestBody OperationRefillDtoRq operationRefillDtoRq) {
@@ -52,6 +62,7 @@ public class OperationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/transfer")
+    @Operation(summary = "Перевод в другой банк")
     public void transfer(@RequestBody TransferDtoRq transferDtoRq) {
         bankService.transferToOtherBank(
                 transferDtoRq.getToken(),

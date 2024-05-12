@@ -1,5 +1,7 @@
 package org.javaacademy.online_bank.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.UserAuthDto;
 import org.javaacademy.online_bank.dto.UserDto;
@@ -14,15 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@Tag(name = "User Controller", description = "Методы регистрации и аутентификации!")
 public class UserController {
     private final UserService userService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
+    @Operation(summary = "Регистрация")
     public String signUp(@RequestBody UserDto userDto) {
         return userService.signUp(userDto);
     }
 
+    @Operation(summary = "Аутентификации")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping("/auth")
     public String auth(@RequestBody UserAuthDto authDto) {

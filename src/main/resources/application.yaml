@@ -1,3 +1,8 @@
 token:
   prefix: online
   postfix: token
+
+springdoc:
+  swagger-ui:
+    path: /myproject
+  disable-swagger-default-url: true

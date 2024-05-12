@@ -1,5 +1,11 @@
 package org.javaacademy.online_bank.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.AccountDto;
 import org.javaacademy.online_bank.service.AccountService;
@@ -20,25 +26,31 @@ import java.util.Map;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
+@Tag(name = "Account Controller", description = "Методы управления счетами!")
 public class AccountController {
     private final AccountService accountService;
     private final UserService userService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<AccountDto> getAccountsByToken(@RequestParam String token) {
+    @Operation(summary = "Получить все счета по токену")
+    @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = AccountDto.class)))
+    public List<AccountDto> getAccountsByToken(@RequestParam @Parameter(name = "Токен") String token) {
         return accountService.getAllAccountsByUser(userService.findUser(token));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/balance")
-    public BigDecimal getBalance(@RequestParam String accountNumber,
-                                 @RequestParam String token) {
+    @Operation(summary = "Получить баланс счета")
+    public BigDecimal getBalance(@RequestParam @Parameter(name = "Номер счета") String accountNumber,
+                                 @RequestParam @Parameter(name = "Токен") String token) {
         return accountService.getBalanceAccountByUser(accountNumber, userService.findUser(token));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @Operation(summary = "Создать счет")
     public String createAccount(@RequestBody Map<String, String> map) {
         return accountService.createAccountForUser(userService.findUser(map.get("token")));
     }
