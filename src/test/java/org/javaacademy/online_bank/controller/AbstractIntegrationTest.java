@@ -2,11 +2,10 @@ package org.javaacademy.online_bank.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.javaacademy.online_bank.dto.CreateAccountDtoRq;
 import org.javaacademy.online_bank.dto.UserAuthDto;
 import org.javaacademy.online_bank.dto.UserDto;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class AbstractIntegrationTest {
     protected static final String FULL_NAME = "Иванов Иван Иваныч";
@@ -45,11 +44,9 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected String createAccount(String token) {
-        Map<String, String> mapToken = new HashMap<>();
-        mapToken.put("token", token);
         return RestAssured
                 .given()
-                .body(mapToken)
+                .body(new CreateAccountDtoRq(token, "Рубль"))
                 .contentType(ContentType.JSON)
                 .post("/account")
                 .then()

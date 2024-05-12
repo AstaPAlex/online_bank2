@@ -8,7 +8,6 @@ import org.javaacademy.online_bank.entity.User;
 import org.javaacademy.online_bank.repository.OperationRepository;
 import org.springframework.stereotype.Service;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -40,6 +39,6 @@ public class OperationService {
 
     private OperationDtoRs convertToDto(Operation operation) {
         return new OperationDtoRs(operation.getUuid(), operation.getDateTime(), operation.getNumberAccount(),
-                operation.getType(), operation.getAmount(), operation.getDescription());
+                operation.getType(), operation.getAmount(), operation.getDescription(), operation.getCurrency());
     }
 }

@@ -3,6 +3,7 @@ package org.javaacademy.online_bank.service;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.AccountDto;
 import org.javaacademy.online_bank.entity.Account;
+import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.entity.User;
 import org.javaacademy.online_bank.repository.AccountRepository;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,10 @@ public class AccountService {
         throw new RuntimeException("The number of accounts has been exceeded!");
     }
 
-    public String createAccountForUser(User user) {
-        String accountNumber = generateNumberAccount();
-        accountRepository.addAccount(accountNumber, user);
+    public String createAccountForUser(User user, String currencyName) {
+        Currency currency = Currency.getCodeCurrency(currencyName);
+        String accountNumber = currency.getCode() + generateNumberAccount();
+        accountRepository.addAccount(accountNumber, user, currency);
         return accountNumber;
     }
 
@@ -61,7 +63,8 @@ public class AccountService {
         return new AccountDto(
                 account.getNumber(),
                 account.getUser(),
-                account.getBalance()
+                account.getBalance(),
+                account.getCurrency()
         );
     }
 
@@ -79,5 +82,9 @@ public class AccountService {
             return getBalance(numberAccount);
         }
         throw new RuntimeException("The account does not belong to this user!");
+    }
+
+    public Account findAccountByNumber(String numberAccount) {
+        return accountRepository.findAccountByNumber(numberAccount);
     }
 }

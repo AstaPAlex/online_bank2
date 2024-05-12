@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OperationRefillDtoRq {
-    private BigDecimal amount;
-    private String numberAccount;
-    private String description;
-    private String currency;
-
+public class ExchangeRateDto {
+    private String currency1;
+    private String currency2;
+    private BigDecimal rate;
 }

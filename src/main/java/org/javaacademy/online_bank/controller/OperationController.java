@@ -7,7 +7,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.javaacademy.online_bank.dto.*;
+import org.javaacademy.online_bank.dto.OperationDtoRs;
+import org.javaacademy.online_bank.dto.OperationPayDtoRq;
+import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
+import org.javaacademy.online_bank.dto.TransferDtoRq;
+import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.service.BankService;
 import org.javaacademy.online_bank.service.OperationService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +28,7 @@ import java.util.TreeSet;
 @RestController
 @RequestMapping("/operation")
 @RequiredArgsConstructor
-@Tag(name = "Operation Controller", description = "Методы: пополнения, списания, перевода и получения списка операций!")
+@Tag(name = "Operation Controller", description = "Методы: пополнения, списания, перевода и получения списка операций")
 public class OperationController {
     private final OperationService operationService;
     private final BankService bankService;
@@ -46,7 +50,8 @@ public class OperationController {
         bankService.payment(operationPayDtoRq.getNumberAccount(),
                 operationPayDtoRq.getAmount(),
                 operationPayDtoRq.getDescription(),
-                operationPayDtoRq.getToken());
+                operationPayDtoRq.getToken(),
+                Currency.getCodeCurrency(operationPayDtoRq.getCurrency()));
     }
 
     @Operation(summary = "Пополнить счет")
@@ -56,7 +61,8 @@ public class OperationController {
         bankService.refill(
                 operationRefillDtoRq.getNumberAccount(),
                 operationRefillDtoRq.getAmount(),
-                operationRefillDtoRq.getDescription()
+                operationRefillDtoRq.getDescription(),
+                Currency.getCodeCurrency(operationRefillDtoRq.getCurrency())
         );
     }
 
@@ -69,7 +75,8 @@ public class OperationController {
                 transferDtoRq.getAmount(),
                 transferDtoRq.getDescription(),
                 transferDtoRq.getNumberAccountUser(),
-                transferDtoRq.getNumberAccountToSend()
+                transferDtoRq.getNumberAccountToSend(),
+                transferDtoRq.getCurrency()
         );
     }
 

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.AccountDto;
+import org.javaacademy.online_bank.dto.CreateAccountDtoRq;
 import org.javaacademy.online_bank.service.AccountService;
 import org.javaacademy.online_bank.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/account")
@@ -51,8 +51,10 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @Operation(summary = "Создать счет")
-    public String createAccount(@RequestBody Map<String, String> map) {
-        return accountService.createAccountForUser(userService.findUser(map.get("token")));
+    public String createAccount(@RequestBody CreateAccountDtoRq createAccountDtoRq) {
+        return accountService.createAccountForUser(
+                userService.findUser(createAccountDtoRq.getToken()),
+                createAccountDtoRq.getCurrency());
     }
 
 }

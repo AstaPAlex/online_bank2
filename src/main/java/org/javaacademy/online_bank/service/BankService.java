@@ -3,6 +3,7 @@ package org.javaacademy.online_bank.service;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.config.BankProperty;
 import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
+import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.entity.Operation;
 import org.javaacademy.online_bank.entity.TypeOperation;
 import org.javaacademy.online_bank.entity.User;
@@ -20,19 +21,27 @@ public class BankService {
     private final UserService userService;
     private final OperationService operationService;
     private final TransfersToOtherBanksService transfersToOtherBanksService;
+    private final CurrencyService currencyService;
 
-    public void payment(String numberAccount, BigDecimal amount, String description, String token) {
+    public void payment(String numberAccount, BigDecimal amount, String description,
+                        String token, Currency currencyPayment) {
         User user = userService.findUser(token);
         if (!accountService.accountOwnedUser(user, numberAccount)) {
             throw new RuntimeException();
         }
-        accountService.minusBalance(numberAccount, amount);
-        operationService.addOperation(createOperation(numberAccount, TypeOperation.PAYMENT, amount, description));
+        Currency currencyAccount = accountService.findAccountByNumber(numberAccount).getCurrency();
+        BigDecimal conversionAmount = currencyService.conversion(amount, currencyPayment, currencyAccount);
+        accountService.minusBalance(numberAccount, conversionAmount);
+        operationService.addOperation(createOperation(numberAccount, TypeOperation.PAYMENT,
+                conversionAmount, description, currencyAccount));
     }
 
-    public void refill(String numberAccount, BigDecimal amount, String description) {
-        accountService.plusBalance(numberAccount, amount);
-        operationService.addOperation(createOperation(numberAccount, TypeOperation.REFILL, amount, description));
+    public void refill(String numberAccount, BigDecimal amount, String description, Currency currencyRefill) {
+        Currency currencyAccount = accountService.findAccountByNumber(numberAccount).getCurrency();
+        BigDecimal conversionAmount = currencyService.conversion(amount, currencyRefill, currencyAccount);
+        accountService.plusBalance(numberAccount, conversionAmount);
+        operationService.addOperation(createOperation(numberAccount, TypeOperation.REFILL, conversionAmount,
+                description, currencyAccount));
     }
 
     public TreeSet<Operation> getHistory(String token) {
@@ -41,14 +50,15 @@ public class BankService {
     }
 
     private Operation createOperation(String numberAccount, TypeOperation type,
-                                      BigDecimal amount, String description) {
+                                      BigDecimal amount, String description, Currency currency) {
         return new Operation(
                 UUID.randomUUID(),
                 LocalDateTime.now(),
                 numberAccount,
                 type,
                 amount,
-                description);
+                description,
+                currency);
     }
 
     public String info() {
@@ -56,22 +66,35 @@ public class BankService {
     }
 
     public void transferToOtherBank(String token, BigDecimal amount, String description,
-                                    String numberAccountUser, String numberAccountToSend) {
+                                    String numberAccountUser, String numberAccountToSend, Currency currencyTransfer) {
         User user = userService.findUser(token);
         BigDecimal balance = accountService.getBalanceAccountByUser(numberAccountUser, user);
         OperationRefillDtoRq reqBody = new OperationRefillDtoRq(
                 amount,
                 numberAccountToSend,
-                "Из банка: %s, от %s, описание: %s".formatted(bankProperty.getName(), user.getFullName(), description));
+                "Из банка: %s, от %s, описание: %s".formatted(bankProperty.getName(), user.getFullName(), description),
+                currencyTransfer.getCurrency());
         if (balance.compareTo(amount) >= 0) {
             transfersToOtherBanksService.transfersToOtherBank(reqBody);
             accountService.minusBalance(numberAccountUser, amount);
             operationService.addOperation(createOperation(
                     numberAccountUser,
                     TypeOperation.PAYMENT,
-                    amount, description)
+                    amount, description, currencyTransfer)
             );
         }
+    }
+
+    public void buyCurrency(String numberAccountFrom, String numberAccountTo, BigDecimal amount, String token) {
+        User user = userService.findUser(token);
+        if (!accountService.accountOwnedUser(user, numberAccountFrom)
+                || !accountService.accountOwnedUser(user, numberAccountTo)) {
+            throw new RuntimeException("The accounts do not belong to this user");
+        }
+        payment(numberAccountFrom, amount, "Конвертация",
+                token, accountService.findAccountByNumber(numberAccountFrom).getCurrency());
+        refill(numberAccountTo, amount, "Конвертация",
+                accountService.findAccountByNumber(numberAccountFrom).getCurrency());
     }
 
 }

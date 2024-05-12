@@ -2,6 +2,7 @@ package org.javaacademy.online_bank.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.entity.TypeOperation;
 
 import java.math.BigDecimal;
@@ -17,4 +18,5 @@ public class OperationDtoRs {
     private TypeOperation type;
     private BigDecimal amount;
     private String description;
+    private Currency currency;
 }

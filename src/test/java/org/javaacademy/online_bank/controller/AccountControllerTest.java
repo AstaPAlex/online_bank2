@@ -27,7 +27,7 @@ class AccountControllerTest extends AbstractIntegrationTest {
     @Test
     void createAccountSuccess() {
         String accountNumber = createAccount(getToken());
-        assertEquals("000001", accountNumber);
+        assertEquals("810000001", accountNumber);
         assertEquals(
                 BigDecimal.ZERO.setScale(2 , RoundingMode.CEILING),
                 accountService.getBalance(accountNumber));

@@ -21,5 +21,7 @@ public class Operation {
     private BigDecimal amount;
     @NonNull
     private String description;
+    @NonNull
+    private Currency currency;
 
 }

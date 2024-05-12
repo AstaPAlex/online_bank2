@@ -14,4 +14,5 @@ public class OperationPayDtoRq {
     private BigDecimal amount;
     private String numberAccount;
     private String description;
+    private String currency;
 }

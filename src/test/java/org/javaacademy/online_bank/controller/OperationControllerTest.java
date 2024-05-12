@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.dto.OperationPayDtoRq;
 import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
+import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.entity.Operation;
 import org.javaacademy.online_bank.repository.OperationRepository;
 import org.javaacademy.online_bank.service.AccountService;
@@ -12,15 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,7 +43,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
         String accountNumber = createAccount(token);
         RestAssured
                 .given()
-                .body(new OperationRefillDtoRq(BigDecimal.TEN, accountNumber, DESCRIPTION_REFILL))
+                .body(new OperationRefillDtoRq(BigDecimal.TEN, accountNumber, DESCRIPTION_REFILL, "Рубль"))
                 .contentType(ContentType.JSON)
                 .log().all()
                 .post(BASE_URL + "/receive")
@@ -91,7 +88,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
     public void pay(BigDecimal amount, Integer code, String token, String accountNumber) {
         RestAssured
                 .given()
-                .body(new OperationPayDtoRq(token, amount, accountNumber, DESCRIPTION_PAY))
+                .body(new OperationPayDtoRq(token, amount, accountNumber, DESCRIPTION_PAY, "Рубль"))
                 .contentType(ContentType.JSON)
                 .log().all()
                 .post(BASE_URL + "/pay")
@@ -100,7 +97,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
     }
 
     public void refill(BigDecimal amount, String accountNumber) {
-        OperationRefillDtoRq reqBody = new OperationRefillDtoRq(amount, accountNumber, DESCRIPTION_REFILL);
+        OperationRefillDtoRq reqBody = new OperationRefillDtoRq(amount, accountNumber, DESCRIPTION_REFILL, "Рубль");
         restTemplate.postForEntity(
                 FULL_URL,
                 reqBody,

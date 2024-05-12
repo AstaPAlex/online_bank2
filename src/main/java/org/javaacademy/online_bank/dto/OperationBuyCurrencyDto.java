@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class OperationRefillDtoRq {
+@AllArgsConstructor
+public class OperationBuyCurrencyDto {
+    private String numberAccountFrom;
+    private String numberAccountTo;
     private BigDecimal amount;
-    private String numberAccount;
-    private String description;
-    private String currency;
-
+    private String token;
 }

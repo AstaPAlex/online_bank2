@@ -12,5 +12,7 @@ public class Account {
     private String number;
     @NonNull
     private User user;
+    @NonNull
+    private Currency currency;
     private BigDecimal balance = new BigDecimal(BigInteger.ZERO, 2);
 }
