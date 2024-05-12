@@ -4,13 +4,7 @@ import org.javaacademy.online_bank.entity.Account;
 import org.javaacademy.online_bank.entity.Operation;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,7 +23,7 @@ public class OperationRepository {
         operations.put(operation.getUuid(), operation);
     }
 
-    public TreeSet<Operation> getAllOperationsByAccounts(List<Account> accounts) {
+    public TreeSet<Operation> getAllOperationsByAccounts(Set<Account> accounts) {
         return accounts.stream()
                 .map(Account::getNumber)
                 .flatMap(number -> getAllOperationsByNumberAccount(number).stream())

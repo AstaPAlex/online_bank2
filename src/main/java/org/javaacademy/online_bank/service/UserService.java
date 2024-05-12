@@ -48,8 +48,9 @@ public class UserService {
     public UUID decryptionToken(String token) {
         try {
             return UUID.fromString(token
-                    .replace(tokenProperty.getPrefix(), "")
-                    .replace(tokenProperty.getPostfix(), "")
+                    .substring(
+                            tokenProperty.getPrefix().length(),
+                            token.length() - tokenProperty.getPostfix().length())
             );
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid token!");

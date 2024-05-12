@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class AccountService {
         account.setBalance(balance.subtract(amount));
     }
 
-    public List<Account> findAllAccountsByUser(User user) {
+    public Set<Account> findAllAccountsByUser(User user) {
         return accountRepository.getAllAccountsByUser(user);
     }
 

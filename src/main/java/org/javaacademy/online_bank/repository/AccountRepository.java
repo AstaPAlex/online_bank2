@@ -3,11 +3,9 @@ package org.javaacademy.online_bank.repository;
 import org.javaacademy.online_bank.entity.Account;
 import org.javaacademy.online_bank.entity.User;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class AccountRepository {
@@ -25,10 +23,10 @@ public class AccountRepository {
                 .orElseThrow(() -> new RuntimeException("There is no such account number!"));
     }
 
-    public List<Account> getAllAccountsByUser(User user) {
+    public Set<Account> getAllAccountsByUser(User user) {
         return accounts.values().stream()
                 .filter(account -> Objects.equals(account.getUser(), user))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
 }

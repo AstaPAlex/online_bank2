@@ -15,7 +15,6 @@ public class AuthService {
         authRepository.add(uuid, pinCode);
     }
 
-    //Аутентификация
     public boolean signIn(UUID uuid, String pinCode) {
         return authRepository.checkPinCode(uuid, pinCode);
     }

@@ -2,6 +2,7 @@ package org.javaacademy.online_bank.service;
 
 import lombok.RequiredArgsConstructor;
 import org.javaacademy.online_bank.config.BankProperty;
+import org.javaacademy.online_bank.dto.OperationRefillDtoRq;
 import org.javaacademy.online_bank.entity.Operation;
 import org.javaacademy.online_bank.entity.TypeOperation;
 import org.javaacademy.online_bank.entity.User;
@@ -58,14 +59,12 @@ public class BankService {
                                     String numberAccountUser, String numberAccountToSend) {
         User user = userService.findUser(token);
         BigDecimal balance = accountService.getBalanceAccountByUser(numberAccountUser, user);
+        OperationRefillDtoRq reqBody = new OperationRefillDtoRq(
+                amount,
+                numberAccountToSend,
+                "Из банка: %s, от %s, описание: %s".formatted(bankProperty.getName(), user.getFullName(), description));
         if (balance.compareTo(amount) >= 0) {
-            transfersToOtherBanksService.transfersToOtherBank(
-                    bankProperty.getName(),
-                    amount,
-                    description,
-                    user.getFullName(),
-                    numberAccountToSend
-                    );
+            transfersToOtherBanksService.transfersToOtherBank(reqBody);
             accountService.minusBalance(numberAccountUser, amount);
             operationService.addOperation(createOperation(
                     numberAccountUser,

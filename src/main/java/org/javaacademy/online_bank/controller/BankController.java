@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/bank-info")
 @RequiredArgsConstructor
 public class BankController {
     private final BankService bankService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/bank-info")
+    @GetMapping
     public String info() {
         return bankService.info();
     }

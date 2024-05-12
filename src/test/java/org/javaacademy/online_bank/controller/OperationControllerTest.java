@@ -12,9 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.web.client.RestTemplate;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,16 +32,26 @@ class OperationControllerTest extends AbstractIntegrationTest {
     private static final String DESCRIPTION_REFILL = "Пополнение!";
     private static final String DESCRIPTION_PAY = "Платеж!";
     private static final String BASE_URL = "/operation";
+    private static final String FULL_URL = "http://localhost:8080/operation/receive";
     @Autowired
     private OperationRepository operationRepository;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Test
     void refillSuccess() {
         String token = getToken();
         String accountNumber = createAccount(token);
-        refill(BigDecimal.TEN, 201, accountNumber);
+        RestAssured
+                .given()
+                .body(new OperationRefillDtoRq(BigDecimal.TEN, accountNumber, DESCRIPTION_REFILL))
+                .contentType(ContentType.JSON)
+                .log().all()
+                .post(BASE_URL + "/receive")
+                .then()
+                .statusCode(201);
         TreeSet<Operation> operations = operationRepository.getAllOperationsByNumberAccount(accountNumber);
         assertEquals(1, operations.size());
         Operation operation = operations.stream()
@@ -50,7 +66,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
     void paySuccess() {
         String token = getToken();
         String accountNumber = createAccount(token);
-        refill(BigDecimal.valueOf(30), 201, accountNumber);
+        refill(BigDecimal.valueOf(30), accountNumber);
         pay(BigDecimal.valueOf(30), 201, token, accountNumber);
         assertEquals(
                 BigDecimal.ZERO.setScale(2, RoundingMode.CEILING),
@@ -83,15 +99,12 @@ class OperationControllerTest extends AbstractIntegrationTest {
                 .statusCode(code);
     }
 
-    public void refill(BigDecimal amount, Integer code, String accountNumber) {
-        RestAssured
-                .given()
-                .body(new OperationRefillDtoRq(amount, accountNumber, DESCRIPTION_REFILL))
-                .contentType(ContentType.JSON)
-                .log().all()
-                .post(BASE_URL + "/receive")
-                .then()
-                .statusCode(code);
+    public void refill(BigDecimal amount, String accountNumber) {
+        OperationRefillDtoRq reqBody = new OperationRefillDtoRq(amount, accountNumber, DESCRIPTION_REFILL);
+        restTemplate.postForEntity(
+                FULL_URL,
+                reqBody,
+                Void.class);
     }
 
 }

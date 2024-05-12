@@ -26,7 +26,7 @@ public class OperationController {
     private final BankService bankService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping()
+    @GetMapping
     public TreeSet<OperationDtoRs> getAllOperationsByToken(@RequestParam String token) {
         return operationService.getAllOperationsByToken(token);
     }

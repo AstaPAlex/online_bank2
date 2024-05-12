@@ -54,10 +54,7 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .post(BASE_URL + "/auth")
                 .then()
                 .log().all()
-                .statusCode(503)
-                .extract()
-                .body()
-                .asString();
+                .statusCode(503);
     }
 
 }

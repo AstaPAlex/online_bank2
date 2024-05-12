@@ -9,6 +9,7 @@ import org.javaacademy.online_bank.repository.OperationRepository;
 import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class OperationService {
     }
 
     public TreeSet<Operation> getAllOperationsByUser(User user) {
-        List<Account> accounts = accountService.findAllAccountsByUser(user);
+        Set<Account> accounts = accountService.findAllAccountsByUser(user);
         return operationRepository.getAllOperationsByAccounts(accounts);
     }
 

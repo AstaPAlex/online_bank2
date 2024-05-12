@@ -14,7 +14,7 @@ public abstract class AbstractIntegrationTest {
     protected static final String PREFIX = "online";
     protected static final String POSTFIX = "token";
 
-    public String signup() {
+    protected String signup() {
         return RestAssured
                 .given()
                 .body(new UserDto(FULL_NAME, PHONE_NUMBER))
@@ -29,7 +29,7 @@ public abstract class AbstractIntegrationTest {
                 .asString();
     }
 
-    public String auth(String pinCode) {
+    protected String auth(String pinCode) {
         return RestAssured
                 .given()
                 .body(new UserAuthDto(PHONE_NUMBER, pinCode))
@@ -44,7 +44,7 @@ public abstract class AbstractIntegrationTest {
                 .asString();
     }
 
-    public String createAccount(String token) {
+    protected String createAccount(String token) {
         Map<String, String> mapToken = new HashMap<>();
         mapToken.put("token", token);
         return RestAssured
@@ -59,7 +59,7 @@ public abstract class AbstractIntegrationTest {
                 .asString();
     }
 
-    public String getToken() {
+    protected String getToken() {
         String pinCode = signup();
         return auth(pinCode);
     }
