@@ -12,6 +12,8 @@ public abstract class AbstractIntegrationTest {
     protected static final String PHONE_NUMBER = "+7-111-111-11-11";
     protected static final String PREFIX = "online";
     protected static final String POSTFIX = "token";
+    protected static final String RUB_CURRENCY = "Рубль";
+    protected static final String FULL_URL_REFILL = "http://localhost:8080/operation/receive";
 
     protected String signup() {
         return RestAssured
@@ -43,10 +45,10 @@ public abstract class AbstractIntegrationTest {
                 .asString();
     }
 
-    protected String createAccount(String token) {
+    protected String createAccount(String token, String currency) {
         return RestAssured
                 .given()
-                .body(new CreateAccountDtoRq(token, "Рубль"))
+                .body(new CreateAccountDtoRq(token, currency))
                 .contentType(ContentType.JSON)
                 .post("/account")
                 .then()

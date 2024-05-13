@@ -28,18 +28,17 @@ public class CurrencyService {
 
     public BigDecimal findRate(Currency currency1, Currency currency2) {
         ExchangeRate exchangeRate = currencyRepository.findExchangeRates(currency1, currency2);
-        if (Objects.equals(exchangeRate.getCurrency1(), currency1)) {
+        if (!Objects.equals(exchangeRate.getCurrency1(), currency2)) {
             return exchangeRate.getRate().setScale(SCALE_ROUND, RoundingMode.CEILING);
         }
-        return BigDecimal.ONE
-                .divide(exchangeRate.getRate(), RoundingMode.CEILING)
-                .setScale(SCALE_ROUND, RoundingMode.CEILING);
+        return BigDecimal.ONE.divide(exchangeRate.getRate()).setScale(SCALE_ROUND, RoundingMode.CEILING);
     }
 
     public BigDecimal conversion(BigDecimal amount, Currency currencyFromConversion, Currency currencyToConversion) {
         if (Objects.equals(currencyFromConversion, currencyToConversion)) {
             return amount;
         }
-        return amount.multiply(findRate(currencyFromConversion, currencyToConversion));
+        return amount.multiply(findRate(currencyFromConversion, currencyToConversion))
+                .setScale(2, RoundingMode.CEILING);
     }
 }

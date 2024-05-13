@@ -91,6 +91,10 @@ public class BankService {
                 || !accountService.accountOwnedUser(user, numberAccountTo)) {
             throw new RuntimeException("The accounts do not belong to this user");
         }
+/*        BigDecimal rate = currencyService.findRate(
+                accountService.findAccountByNumber(numberAccountFrom).getCurrency(),
+                accountService.findAccountByNumber(numberAccountTo).getCurrency()
+        );*/
         payment(numberAccountFrom, amount, "Конвертация",
                 token, accountService.findAccountByNumber(numberAccountFrom).getCurrency());
         refill(numberAccountTo, amount, "Конвертация",

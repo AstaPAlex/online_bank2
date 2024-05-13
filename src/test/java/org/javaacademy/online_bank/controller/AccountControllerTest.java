@@ -26,7 +26,7 @@ class AccountControllerTest extends AbstractIntegrationTest {
 
     @Test
     void createAccountSuccess() {
-        String accountNumber = createAccount(getToken());
+        String accountNumber = createAccount(getToken(), RUB_CURRENCY);
         assertEquals("810000001", accountNumber);
         assertEquals(
                 BigDecimal.ZERO.setScale(2 , RoundingMode.CEILING),
@@ -36,7 +36,7 @@ class AccountControllerTest extends AbstractIntegrationTest {
     @Test
     void getBalanceSuccess() {
         String token = getToken();
-        String accountNumber = createAccount(token);
+        String accountNumber = createAccount(token, RUB_CURRENCY);
         BigDecimal bigDecimal = RestAssured
                 .get(BASE_URL + "/balance?token=" + token + "&accountNumber=" + accountNumber)
                 .then()
@@ -50,7 +50,7 @@ class AccountControllerTest extends AbstractIntegrationTest {
 
     @Test
     void getBalanceFail() {
-        String accountNumber = createAccount(getToken());
+        String accountNumber = createAccount(getToken(), RUB_CURRENCY);
         RestAssured
                 .get(BASE_URL + "/balance?token=" + FAIL_TOKEN + "&number=" + accountNumber)
                 .then()
@@ -61,8 +61,8 @@ class AccountControllerTest extends AbstractIntegrationTest {
     @Test
     void getListAccountByTokenSuccess() {
         String token = getToken();
-        createAccount(token);
-        createAccount(token);
+        createAccount(token, RUB_CURRENCY);
+        createAccount(token, RUB_CURRENCY);
         TypeRef<List<AccountDto>> typeRef = new TypeRef<>() {
         };
         List<AccountDto> accounts = RestAssured
@@ -79,8 +79,8 @@ class AccountControllerTest extends AbstractIntegrationTest {
     @Test
     void getListAccountByTokenFail() {
         String token = getToken();
-        createAccount(token);
-        createAccount(token);
+        createAccount(token, RUB_CURRENCY);
+        createAccount(token, RUB_CURRENCY);
         TypeRef<List<AccountDto>> typeRef = new TypeRef<>() {
         };
         RestAssured

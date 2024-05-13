@@ -40,10 +40,10 @@ class OperationControllerTest extends AbstractIntegrationTest {
     @Test
     void refillSuccess() {
         String token = getToken();
-        String accountNumber = createAccount(token);
+        String accountNumber = createAccount(token, RUB_CURRENCY);
         RestAssured
                 .given()
-                .body(new OperationRefillDtoRq(BigDecimal.TEN, accountNumber, DESCRIPTION_REFILL, "Рубль"))
+                .body(new OperationRefillDtoRq(BigDecimal.TEN, accountNumber, DESCRIPTION_REFILL, RUB_CURRENCY))
                 .contentType(ContentType.JSON)
                 .log().all()
                 .post(BASE_URL + "/receive")
@@ -62,7 +62,7 @@ class OperationControllerTest extends AbstractIntegrationTest {
     @Test
     void paySuccess() {
         String token = getToken();
-        String accountNumber = createAccount(token);
+        String accountNumber = createAccount(token, RUB_CURRENCY);
         refill(BigDecimal.valueOf(30), accountNumber);
         pay(BigDecimal.valueOf(30), 201, token, accountNumber);
         assertEquals(
@@ -81,14 +81,14 @@ class OperationControllerTest extends AbstractIntegrationTest {
     @Test
     void payFail() {
         String token = getToken();
-        String accountNumber = createAccount(token);
+        String accountNumber = createAccount(token, RUB_CURRENCY);
         pay(BigDecimal.valueOf(51), 503, token, accountNumber);
     }
 
     public void pay(BigDecimal amount, Integer code, String token, String accountNumber) {
         RestAssured
                 .given()
-                .body(new OperationPayDtoRq(token, amount, accountNumber, DESCRIPTION_PAY, "Рубль"))
+                .body(new OperationPayDtoRq(token, amount, accountNumber, DESCRIPTION_PAY, RUB_CURRENCY))
                 .contentType(ContentType.JSON)
                 .log().all()
                 .post(BASE_URL + "/pay")
