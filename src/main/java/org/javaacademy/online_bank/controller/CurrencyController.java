@@ -34,7 +34,7 @@ public class CurrencyController {
     }
 
     @ResponseStatus(CREATED)
-    @PostMapping("/buy")
+    @PostMapping("/conversion")
     @Operation(summary = "Купить валюту!")
     public void buyCurrency(@RequestBody OperationBuyCurrencyDto operationBuyCurrencyDto) {
         bankService.buyCurrency(

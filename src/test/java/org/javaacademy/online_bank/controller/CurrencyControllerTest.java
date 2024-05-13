@@ -92,7 +92,7 @@ class CurrencyControllerTest extends AbstractIntegrationTest {
                         accountNumberDollar, BigDecimal.valueOf(100), token))
                 .contentType(ContentType.JSON)
                 .log().all()
-                .post(BASE_URL + "/buy")
+                .post(BASE_URL + "/conversion")
                 .then()
                 .statusCode(201);
         assertEquals(

@@ -16,14 +16,14 @@ public class CurrencyService {
     private final CurrencyRepository currencyRepository;
     private static final Integer SCALE_ROUND = 5;
 
-    public void createExchangeRate(Currency currency1, Currency currency2, BigDecimal rate) {
-        if (Objects.equals(currency1.getCurrency(), currency2.getCurrency())) {
+    public void createExchangeRate(Currency currencyFrom, Currency currencyTo, BigDecimal rate) {
+        if (Objects.equals(currencyFrom.getCurrency(), currencyTo.getCurrency())) {
             throw new RuntimeException("The currency should be different!");
         }
         if (rate.compareTo(BigDecimal.ZERO) < 1) {
             throw new RuntimeException("The course should be positive!");
         }
-        currencyRepository.add(new ExchangeRate(currency1, currency2, rate));
+        currencyRepository.add(new ExchangeRate(currencyFrom, currencyTo, rate));
     }
 
     public BigDecimal findRate(Currency currency1, Currency currency2) {
