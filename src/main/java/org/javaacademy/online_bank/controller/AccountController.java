@@ -11,7 +11,6 @@ import org.javaacademy.online_bank.dto.AccountDto;
 import org.javaacademy.online_bank.dto.CreateAccountDtoRq;
 import org.javaacademy.online_bank.service.AccountService;
 import org.javaacademy.online_bank.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class AccountController {
     private final AccountService accountService;
     private final UserService userService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @GetMapping
     @Operation(summary = "Получить все счета по токену")
     @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
@@ -40,7 +41,7 @@ public class AccountController {
         return accountService.getAllAccountsByUser(userService.findUser(token));
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @GetMapping("/balance")
     @Operation(summary = "Получить баланс счета")
     public BigDecimal getBalance(@RequestParam @Parameter(name = "Номер счета") String accountNumber,
@@ -48,7 +49,7 @@ public class AccountController {
         return accountService.getBalanceAccountByUser(accountNumber, userService.findUser(token));
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping
     @Operation(summary = "Создать счет")
     public String createAccount(@RequestBody CreateAccountDtoRq createAccountDtoRq) {

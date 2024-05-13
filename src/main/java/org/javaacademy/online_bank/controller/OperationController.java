@@ -14,7 +14,6 @@ import org.javaacademy.online_bank.dto.TransferDtoRq;
 import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.service.BankService;
 import org.javaacademy.online_bank.service.OperationService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.TreeSet;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
 @RequestMapping("/operation")
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class OperationController {
     private final OperationService operationService;
     private final BankService bankService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @GetMapping
     @Operation(summary = "Получение всех операций по токену")
     @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
@@ -43,7 +44,7 @@ public class OperationController {
         return operationService.getAllOperationsByToken(token);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping("/pay")
     @Operation(summary = "Создать платеж")
     public void pay(@RequestBody OperationPayDtoRq operationPayDtoRq) {
@@ -55,7 +56,7 @@ public class OperationController {
     }
 
     @Operation(summary = "Пополнить счет")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping("/receive")
     public void refill(@RequestBody OperationRefillDtoRq operationRefillDtoRq) {
         bankService.refill(
@@ -66,7 +67,7 @@ public class OperationController {
         );
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping("/transfer")
     @Operation(summary = "Перевод в другой банк")
     public void transfer(@RequestBody TransferDtoRq transferDtoRq) {

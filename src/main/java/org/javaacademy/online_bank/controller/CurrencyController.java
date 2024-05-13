@@ -8,12 +8,13 @@ import org.javaacademy.online_bank.dto.OperationBuyCurrencyDto;
 import org.javaacademy.online_bank.entity.Currency;
 import org.javaacademy.online_bank.service.BankService;
 import org.javaacademy.online_bank.service.CurrencyService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/currency")
@@ -23,7 +24,7 @@ public class CurrencyController {
     private final CurrencyService currencyService;
     private final BankService bankService;
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping
     @Operation(summary = "Создать курс валют")
     public void createExchangeRate(@RequestBody ExchangeRateDto exchangeRateDto) {
@@ -32,7 +33,7 @@ public class CurrencyController {
                 exchangeRateDto.getRate());
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     @PostMapping("/buy")
     @Operation(summary = "Купить валюту!")
     public void buyCurrency(@RequestBody OperationBuyCurrencyDto operationBuyCurrencyDto) {
